@@ -1,6 +1,9 @@
+const dotenv = require("dotenv");
 const express = require('express');
 
 const pgRouter = require('./databases/postgres');
+
+dotenv.config();
 
 app.use('/pg', pgRouter);
 
