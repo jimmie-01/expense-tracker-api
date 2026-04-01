@@ -14,7 +14,7 @@ const pool = new Pool({
 router.get('/expenses', async(req, res) => {
 	try {
 		const query = "SELECT * FROM expenses";
-		const { rows } = Pool.query(query);
+		const { rows } = pool.query(query);
 		res.json(rows);
 	} catch (err) {
 		console.error(error);
@@ -25,6 +25,15 @@ router.get('/expenses', async(req, res) => {
 // Routes to add new expenses
 
 router.post('/expenses', async(req, res) => {
+	try {
+		const {name, amount, date } = req.body;
+		const query = 'INSERT INTO expenses (name, amount, date) VALUES ($1, $2, $3) RETURNING *';
+		const { rows } = await pool.query(query, [name, amount, date]);
 
+		res.status(201).json(rows[0]);
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: 'Internal Server Error' });
+	}
 })
 module.exports = router;
