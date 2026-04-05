@@ -1,13 +1,16 @@
+const dotenv = require('dotenv');
 const express = require("express");
 const router = express.Router();
 const { Pool } = require('pg');
+
+dotenv.config();
 
 const pool = new Pool({
 	user: process.env.DB_USER,
 	host: process.env.HOST,
 	database: "budget_tracker",
-	password: process.env.PASSWORD,
-	port: process.env.PORT,
+	password: process.env.DB_PASSWORD,
+	port: process.env.DB_PORT,
 })
 
 // Route to get all expenses
