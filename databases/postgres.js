@@ -42,7 +42,7 @@ router.post('/expenses', async(req, res) => {
 
 // Route to Update expenses
 
-router.put("/expenses/:id", async (req, res) => {
+router.put('/expenses/:id', async (req, res) => {
 	try {
 		const id = req.params.id;
 		const { name, amount, date } = req.body;
@@ -50,6 +50,19 @@ router.put("/expenses/:id", async (req, res) => {
 		const { rows } = await pool.query(query, [name, amount, date, id]);
 
 		res.status(201).json(rows[0]);
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: "Internal server error" });
+	}
+})
+
+// Route to remove an expense
+router.delete('/expenses/:id', async (req, res) => {
+	try {
+		const id = req.params.id;
+		const query = "DELETE FROM expenses WHERE id = $1";
+		await pool.query(query, [id]);
+		res.sendStatus(200);
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ error: "Internal server error" });
