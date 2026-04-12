@@ -10,7 +10,8 @@ const { Sequelize, DataTypes } = require('sequelize');
 
 const sequelize = new Sequelize('budget_tracker', 'razaq', 'lastname', {
 	host: process.env.HOST,
-	dialect: "mysql"
+	dialect: "postgres",
+	port: 5432,
 });
 
 // Define the Expense model
