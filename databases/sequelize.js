@@ -12,6 +12,7 @@ const sequelize = new Sequelize('budget_tracker', 'razaq', 'lastname', {
 	host: process.env.HOST,
 	dialect: "postgres",
 	port: 5432,
+	logging: false,
 });
 
 // Define the Expense model
@@ -55,4 +56,37 @@ router.get('/expenses', async (req, res) => {
 	}
 })
 
+// Route to add new expenses
+router.post('/expenses', async (req, res) => {
+	try {
+		const { name, amount, date } = req.body;
+		const expense = await Expense.create({ name, amount, date });
+		await expense.save();
+		res.status(201).json({ message: 'New expense added' });
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: 'Internal server error' });
+	}
+});
+
+// Route to update an expense
+router.put('/expenses/:id', async (req, res)=> {
+	try {
+		const expense = await Expense.findByPk(req.params.id);
+		if (expense) {
+			const {name, amount, date } = req.body;
+			expense.name = name;
+			expense.amount = amount;
+			expense.date = date;
+
+			await expense.save();
+			res.status(201).json({ message: 'expense update successfully!' });
+		} else {
+			res.status(404).json({ error: 'Expense not found !' });
+		}
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: 'Internal server error' });
+	}
+})
 module.exports = router; 
