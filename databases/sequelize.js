@@ -48,7 +48,9 @@ sequelize.sync({ forced: true });
 // Route to get all expenses
 router.get('/expenses', async (req, res) => {
 	try {
-		const expenses = await Expense.findAll();
+		const expenses = await Expense.findAll({
+			order: [['id', 'ASC']],
+		});
 		res.json(expenses);
 	} catch (err) {
 		console.error(err);
@@ -69,7 +71,7 @@ router.post('/expenses', async (req, res) => {
 	}
 });
 
-// Route to update an expense
+// Route to update expenses
 router.put('/expenses/:id', async (req, res)=> {
 	try {
 		const expense = await Expense.findByPk(req.params.id);
@@ -80,13 +82,34 @@ router.put('/expenses/:id', async (req, res)=> {
 			expense.date = date;
 
 			await expense.save();
-			res.status(201).json({ message: 'expense update successfully!' });
+			res.status(201).json({ message: 'expense updated successfully!' });
 		} else {
 			res.status(404).json({ error: 'Expense not found !' });
 		}
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ error: 'Internal server error' });
+	}
+})
+
+// Route to delete expenses
+router.delete('/expenses/:id', async (req, res) => {
+	try {
+		const expense = await findOne({
+			where: {
+				id: req.params.id,
+			},
+		});
+
+		if(expense) {
+			await expense.destroy();
+			res.json({ message: 'Expense deleted ' });
+		} else {
+			res.status(404).json({ message: 'Expense not found' });
+		}
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: 'Internal server error'});
 	}
 })
 module.exports = router; 
